@@ -8,6 +8,7 @@ const clog = (req, res, next) => {
     // const FgMagenta = "\x1b[35m"
     // const FgCyan = "\x1b[36m"
     // const FgWhite = "\x1b[37m"
+    // https://unicode.org/emoji/charts/full-emoji-list.html?utm_source=thenewstack&utm_medium=website&utm_campaign=platform#1f932    
     const openHands = String.fromCodePoint(0x1F932);
     const pointing = String.fromCodePoint(0xF595);
     const handWriting = String.fromCodePoint(0x270D);

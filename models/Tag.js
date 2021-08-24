@@ -6,10 +6,19 @@ class Tag extends Model {}
 
 Tag.init(
   {
-    // define columns
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      // defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true,
+    },
+    tag_name: {
+      type: DataTypes.STRING(30)
+    }
   },
   {
-    sequelize,
+    sequelize: sequelize,
     timestamps: false,
     freezeTableName: true,
     underscored: true,

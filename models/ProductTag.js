@@ -4,12 +4,33 @@ const sequelize = require('../config/connection');
 
 class ProductTag extends Model {}
 
-ProductTag.init(
-  {
-    // define columns
+ProductTag.init({ 
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      // defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true,
+    },
+    product_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'product',
+        key: 'id',
+      }
+    },
+    tag_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'tag',
+        key: 'id',
+      }
+    }
   },
   {
-    sequelize,
+    sequelize: sequelize,
     timestamps: false,
     freezeTableName: true,
     underscored: true,
