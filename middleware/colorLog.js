@@ -11,28 +11,28 @@ const colorLog = (req, res, next) => {
     const FgCyan = "\x1b[36m"
     const FgWhite = "\x1b[37m"
     const openHands = String.fromCodePoint(0x1F932);
-    const pointing = String.fromCodePoint(0xF595);
     const handWriting = String.fromCodePoint(0x270D);
-    const trash = String.fromCodePoint(0xF5d1);
+    const pointing = String.fromCodePoint(0x1F446);
+    const bomb = String.fromCodePoint(0x1F631);		
     switch (req.method) {
       case 'GET': {
-        console.log(`${openHands}${FgGreen}${req.method} request to ${req.path}`);
+        console.log(`${openHands}  ${FgGreen}${req.method} request to ${req.path}`);
         break;
       }
       case 'POST': {
-        console.log(`${handWriting}${FgBlue}${req.method} request to ${req.path}`);
+        console.log(`${handWriting}  ${FgBlue}${req.method} request to ${req.path}`);
         break;
       }
       case 'PUT': {
-        console.log(`${pointing}${FgMagenta}${req.method} request to ${req.path}`);
+        console.log(`${pointing}  ${FgMagenta}${req.method} request to ${req.path}`);
         break;
       }
       case 'DELETE': {
-        console.log(`${trash}${FgRed}${req.method} request to ${req.path}`);
+        console.log(`${bomb}  ${FgRed}${req.method} request to ${req.path}`);
         break;
       }
       default:
-          console.log(`${FgBlack}${req.method} request to ${req.path}`);
+          console.log(`${FgBlack} ${req.method} request to ${req.path}`);
     }
   
     next();
