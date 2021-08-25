@@ -19,7 +19,7 @@ Category.init(
       unique: true,
       validate: {
         'caller': (text) => {
-          validators.stringNoSpacesNoNumbers(text);
+          validators.stringSpacesNoNumbers(text);
         }
       }
     }
