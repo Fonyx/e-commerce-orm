@@ -76,7 +76,6 @@ router.put('/:id', (req, res) => {
           let pastName = tagObj.tag_name;
           tagObj.update({'tag_name': req.body.tag_name})
           .then((resp)=>{
-            clog(resp, 'magenta');
             res.status(200).json({message: `Updated ${pastName} to ${tagObj.tag_name}`});
           })
           .catch((err) => {
