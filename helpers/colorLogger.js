@@ -1,56 +1,88 @@
 
 
-const FgGreen = "\x1b[32m"
-const FgBlue = "\x1b[34m"
-const FgMagenta = "\x1b[35m"
-const FgRed = "\x1b[31m"
-const FgWhite = "\x1b[37m"
-const FgBlack = "\x1b[30m"
-const FgYellow = "\x1b[33m"
-const FgCyan = "\x1b[36m"
+class colorLogger{
+    constructor(){
+        this.colorNames = [
+            'green',
+            'blue',
+            'magenta',
+            'red',
+            'white',
+            'black',
+            'yellow',
+            'cyan',
+        ];
+        this.colorCodes = [
+            "\x1b[32m",
+            "\x1b[34m",
+            "\x1b[35m",
+            "\x1b[31m",
+            "\x1b[37m",
+            "\x1b[30m",
+            "\x1b[33m",
+            "\x1b[36m",
+        ];
+    }
 
+    getColorCode(colorChoice){
+        let colorPrefIndex = this.colorNames.indexOf(colorChoice);
+        if(colorPrefIndex !== -1){
+            let colorCode = this.colorCodes[colorPrefIndex];
+            return colorCode;
+        } else {
+            throw new Error('Color not available');
+        }
+    }
 
-function logGreen(text){
-    console.log(`${FgGreen}${text}`);
+    log(text, colorPref){
+        let colorCode = this.getColorCode(colorPref);
+        console.log(`${colorCode}${text}`);
+    }
 }
 
-function logYellow(text){
-    console.log(`${FgYellow}${text}`);
-}
 
-function logCyan(text){
-    console.log(`${FgCyan}${text}`);
-}
 
-function logBlue(text){
-    console.log(`${FgBlue}${text}`);
-}
+// function logGreen(text){
+//     console.log(`${FgGreen}${text}`);
+// }
 
-function logMagenta(text){
-    console.log(`${FgMagenta}${text}`);
-}
+// function logYellow(text){
+//     console.log(`${FgYellow}${text}`);
+// }
 
-function logRed(text){
-    console.log(`${FgRed}${text}`);
-}
+// function logCyan(text){
+//     console.log(`${FgCyan}${text}`);
+// }
 
-function logWhite(text){
-    console.log(`${FgWhite}${text}`);
-}
+// function logBlue(text){
+//     console.log(`${FgBlue}${text}`);
+// }
 
-function logBlack(text){
-    console.log(`${FgBlack}${text}`);
-}
+// function logMagenta(text){
+//     console.log(`${FgMagenta}${text}`);
+// }
 
-const colorLogger = {
-    logGreen,
-    logBlue,
-    logMagenta,
-    logRed,
-    logYellow,
-    logCyan,
-    logBlack,
-    logWhite
-}
+// function logRed(text){
+//     console.log(`${FgRed}${text}`);
+// }
+
+// function logWhite(text){
+//     console.log(`${FgWhite}${text}`);
+// }
+
+// function logBlack(text){
+//     console.log(`${FgBlack}${text}`);
+// }
+
+// const colorLogger = {
+//     logGreen,
+//     logBlue,
+//     logMagenta,
+//     logRed,
+//     logYellow,
+//     logCyan,
+//     logBlack,
+//     logWhite
+// }
 
 module.exports = colorLogger;
