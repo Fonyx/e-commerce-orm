@@ -16,6 +16,8 @@ function getColorCode(colorChoice){
 function clog(text, colorPref){
     let colorCode = getColorCode(colorPref);
     console.log(`${colorCode}${text}`);
+    let blackCode = getColorCode('black');
+    console.log(`${blackCode}`);
 }
 
 

@@ -1,6 +1,6 @@
 const categoryRouter = require('express').Router();
 const { Category } = require('../../models');
-const cLog = require('../../helpers/colorLogger');
+const clog = require('../../helpers/colorLogger');
 
 
 // The `/api/categories` endpoint
@@ -120,7 +120,7 @@ categoryRouter.delete('/:id', async (req, res) => {
         // happy path
         res.status(200).json({message:`Deleted ${savedDeletedName}`})
       }).catch((err)=>{
-        console.log('Caught error', err)
+        clog(err, 'red');
       })
     // if category is missing
     } else{
