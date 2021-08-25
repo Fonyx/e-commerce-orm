@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
-
+const clog = require('../../helpers/colorLogger');
 // The `/api/products` endpoint
 
 // get all products

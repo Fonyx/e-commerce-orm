@@ -129,7 +129,7 @@ categoryRouter.delete('/:id', async (req, res) => {
   // if something else went wrong
   }catch(err){
     // if something went wrong in the server
-    console.log(err);
+    clog(err, red);
     res.status(500).json({message: `Failed to delete category using id:${req.params.id}`});
   }
 });
