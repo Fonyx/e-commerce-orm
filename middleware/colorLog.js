@@ -10,7 +10,7 @@ const colorLog = (req, res, next) => {
     const bomb = String.fromCodePoint(0x1F631);		
     switch (req.method) {
       case 'GET': {
-        cLogger.logBlue(`${openHands}  ${req.method} request to ${req.path}`);
+        cLogger.logGreen(`${openHands}  ${req.method} request to ${req.path}`);
         break;
       }
       case 'POST': {
