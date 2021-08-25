@@ -43,7 +43,8 @@ Product.init(
       references: {
         model: 'category',
         key: 'id',
-      }
+      },
+      onDelete: 'CASCADE',
     },
   },
   {

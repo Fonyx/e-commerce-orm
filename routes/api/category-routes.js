@@ -1,5 +1,5 @@
 const categoryRouter = require('express').Router();
-const { Category, Product } = require('../../models');
+const { Category } = require('../../models');
 
 // The `/api/categories` endpoint
 
@@ -93,8 +93,35 @@ categoryRouter.put('/:id', async (req, res) => {
   }
 });
 
+/**
+ * A route that deletes a category by id
+ */
 categoryRouter.delete('/:id', async (req, res) => {
   // delete a category by its `id` value
+  try{
+    let categoryToDestroy = await Category.findByPk(req.params.id);
+    // if there is a category returned
+    if(categoryToDestroy){
+      let savedDeletedName = categoryToDestroy.category_name;
+      // destroy is a promise so we need to call then and catch to intercept sequelize validation errors
+      await categoryToDestroy.destroy()
+      .then((something)=>{
+        console.log(something);
+        // happy path
+        res.status(200).json({message:`Deleted ${savedDeletedName}`})
+      }).catch((err)=>{
+        console.log('Caught error', err)
+      })
+    // if category is missing
+    } else{
+      res.status(404).json({message: `No category with id: ${req.params.id} found`});
+    }
+  // if something else went wrong
+  }catch(err){
+    // if something went wrong in the server
+    console.log(err);
+    res.status(500).json({message: `Failed to delete category using id:${req.params.id}`});
+  }
 });
 
 module.exports = categoryRouter;
