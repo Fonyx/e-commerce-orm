@@ -1,4 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
+const validators = require('../helpers/validators');
 
 const sequelize = require('../config/connection.js');
 
@@ -17,7 +18,9 @@ Category.init(
       allowNull: false,
       unique: true,
       validate: {
-        isAlpha: true,
+        'caller': (text) => {
+          validators.stringNoSpacesNoNumbers(text);
+        }
       }
     }
   },
