@@ -28,7 +28,6 @@ Category.hasMany(Product, {
 Product.belongsToMany(Tag, {
   through: {
     model: ProductTag,
-    unique: true,
   }, 
   onDelete: 'CASCADE',
   as: 'Product Tag'
@@ -38,7 +37,6 @@ Product.belongsToMany(Tag, {
 Tag.belongsToMany(Product, {
   through: {
     model: ProductTag,
-    unique: true,
   }, 
   onDelete: 'CASCADE',
   as: 'Tag Product'
