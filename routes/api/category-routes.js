@@ -77,12 +77,13 @@ categoryRouter.put('/:id', async (req, res) => {
       let categoryToUpdate = await Category.findByPk(req.params.id);
       // if there is a category returned
       if(categoryToUpdate){
+        let pastName = categoryToUpdate.category_name;
         // update is a promise so we need to call then and catch to intercept sequelize validation errors
         categoryToUpdate.update({
           'category_name': req.body.category_name
         }).then((something)=>{
           // happy path
-          res.status(200).json({message:`Updated ${categoryToUpdate.category_name} to ${categoryToUpdate.category_name}`})
+          res.status(200).json({message:`Updated ${pastName} to ${categoryToUpdate.category_name}`})
         }).catch((err)=>{
           // if we fail validation
           if(err.name === 'SequelizeValidationError'){

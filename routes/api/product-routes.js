@@ -114,8 +114,32 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete one product by its `id` value
+  // delete a category by its `id` value
+  try{
+    let productToDestroy = await Product.findByPk(req.params.id);
+    // if there is a category returned
+    if(productToDestroy){
+      let savedDeletedName = productToDestroy.product_name;
+      // destroy is a promise so we need to call then and catch to intercept sequelize validation errors
+      await productToDestroy.destroy()
+      .then(()=>{
+        // happy path
+        res.status(200).json({message:`Deleted ${savedDeletedName}`})
+      }).catch((err)=>{
+        clog(err, 'red');
+      })
+    // if category is missing
+    } else{
+      res.status(404).json({message: `No product with id: ${req.params.id} found`});
+    }
+  // if something else went wrong
+  }catch(err){
+    // if something went wrong in the server
+    clog(err, red);
+    res.status(500).json({message: `Failed to delete product using id:${req.params.id}`});
+  }
 });
 
 module.exports = router;
