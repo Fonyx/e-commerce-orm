@@ -1,5 +1,7 @@
 // import important parts of sequelize library
 const { Model, DataTypes } = require('sequelize');
+const validators = require('../helpers/validators');
+
 // import our database connection from config.js
 const sequelize = require('../config/connection');
 
@@ -20,7 +22,9 @@ Product.init(
       allowNull: false,
       unique: true,
       validate: {
-        isAlpha: true,
+        'caller': (text) => {
+          validators.stringSpacesNoNumbers(text);
+        }
       }
     },
     price: {
@@ -44,7 +48,6 @@ Product.init(
         model: 'category',
         key: 'id',
       },
-      onDelete: 'CASCADE',
     },
   },
   {
