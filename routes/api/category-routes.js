@@ -1,5 +1,7 @@
 const categoryRouter = require('express').Router();
 const { Category } = require('../../models');
+const cLog = require('../../helpers/colorLogger');
+
 
 // The `/api/categories` endpoint
 
@@ -114,8 +116,7 @@ categoryRouter.delete('/:id', async (req, res) => {
       let savedDeletedName = categoryToDestroy.category_name;
       // destroy is a promise so we need to call then and catch to intercept sequelize validation errors
       await categoryToDestroy.destroy()
-      .then((something)=>{
-        console.log(something);
+      .then(()=>{
         // happy path
         res.status(200).json({message:`Deleted ${savedDeletedName}`})
       }).catch((err)=>{
