@@ -112,7 +112,7 @@ router.post('/', async (req, res) => {
   .catch((err) => {
     // if we fail validation
     if(err.name === 'SequelizeValidationError'){
-      res.status(400).json({message: `Cannot add product with name containing non space or alpha characters`});
+      res.status(400).json({message: `Cannot add product with ${err.errors[0].path} containing non space or alpha characters`});
     } else if(err.name === 'SequelizeUniqueConstraintError'){
       // RFC2616 states error 400 as : the server cannot or will not process the request due to something that is perceived to be a client error
       // we wil use this as the client trying to add an entry that is already there is their own fault
@@ -127,51 +127,103 @@ router.post('/', async (req, res) => {
 // update product
 router.put('/:id', async (req, res) => {
   // update product data
+  // check post structure
+  if(!req.body.product_name || !req.body.price || !req.body.stock || !req.body.tagIds){
+    res.status(400).json({message: "Request lacked a paramter in the body"});
+    return
+  }
+  // get categories
+  let categories = await Category.findAll({
+    order:[['id', 'ASC'],],
+  });
+  let allCategoryNames = categories.map((categoryObj) => categoryObj.id+':'+categoryObj.category_name);
+  // get tag names
+  let tags = await Tag.findAll({
+    attributes: ['id','tag_name'],
+    order:[['id', 'ASC'],],
+  });
+  // map tag names and their index for reactive user attempt to fix failed post query
+  let allTagNames = tags.map((tagObj) => tagObj.id+':'+tagObj.tag_name);
+  // make list of requested tag id numbers
+  let availableTagIds = tags.map((tagObj) => tagObj.id);
+  // check that all the tag id's are present
+  for(let i=0; i<req.body.tagIds.length; i++){
+    let currentReqTag = req.body.tagIds[i];
+    if(!availableTagIds.includes(currentReqTag)){
+      res.status(400).json({message:`Unable to find Tag in request, please choose from: ${allTagNames}`});
+      return
+    }
+  }
+  // check there is either a category_name or category_id
+  if(!req.body.category_name && !req.body.category_id){
+    res.status(400).json({message: "Request lacked either category_name or category_id in the body"});
+    return
+  }
+  // package for product create details, it will eventually have product_name, category_id, price, stock
+  let package = {
+    product_name: req.body.product_name,
+    price: req.body.price,
+    stock: req.body.stock
+  };
+  // if there is a category_name, retrieve the id
+  if(req.body.category_name){
+    let categoryObj = await Category.findOne({ where: {category_name: req.body.category_name} });
+    if(categoryObj){
+      package['category_id'] = categoryObj.id;
+    // if no category matched, return a 400 response and list available category names
+    } else {
+      res.status(400).json({message: `Category: ${req.body.category_name} could not be found. Use one from ${allCategoryNames}`});
+      return
+    }
+  // if there is no category name, there must be a category_id passed in, see above checks
+  } else {
+    package['category_id'] = req.body.category_id;
+  }
   await Product.update(req.body, {
     where: {
       id: req.params.id,
     },
   })
-    .then((product) => {
-      // find all associated tags from ProductTag
-      return ProductTag.findAll({ where: { product_id: req.params.id } });
-    })
-    .then((productTags) => {
-      // get list of current tag_ids
-      const productTagIds = productTags.map(({ tag_id }) => tag_id);
-      // create filtered list of new tag_ids
-      const newProductTags = req.body.tagIds
-        .filter((tag_id) => !productTagIds.includes(tag_id))
-        .map((tag_id) => {
-          return {
-            product_id: req.params.id,
-            tag_id,
-          };
-        });
-      // figure out which ones to remove
-      const productTagsToRemove = productTags
-        .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
-        .map(({ id }) => id);
+  .then((product) => {
+    // find all associated tags from ProductTag
+    return ProductTag.findAll({ where: { product_id: req.params.id } });
+  })
+  .then((productTags) => {
+    // get list of current tag_ids
+    const productTagIds = productTags.map(({ tag_id }) => tag_id);
+    // create filtered list of new tag_ids
+    const newProductTags = req.body.tagIds
+      .filter((tag_id) => !productTagIds.includes(tag_id))
+      .map((tag_id) => {
+        return {
+          product_id: req.params.id,
+          tag_id,
+        };
+      });
+    // figure out which ones to remove
+    const productTagsToRemove = productTags
+      .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
+      .map(({ id }) => id);
 
-      // run both actions
-      return Promise.all([
-        ProductTag.destroy({ where: { id: productTagsToRemove } }),
-        ProductTag.bulkCreate(newProductTags),
-      ]);
-    })
-    .then((updatedProductTags) => res.json(updatedProductTags))
-    .catch((err) => {
-      // if we fail validation
-      if(err.name === 'SequelizeValidationError'){
-        res.status(400).json({message: `Cannot add product with name containing non space or alpha characters`});
-      } else if(err.name === 'SequelizeUniqueConstraintError'){
-        // RFC2616 states error 400 as : the server cannot or will not process the request due to something that is perceived to be a client error
-        // we wil use this as the client trying to add an entry that is already there is their own fault
-        res.status(400).json({message: `Product ${req.body.product_name} already exists`});
-      } else{
-        res.status(500).json(err);
-      }
-    });
+    // run both actions
+    return Promise.all([
+      ProductTag.destroy({ where: { id: productTagsToRemove } }),
+      ProductTag.bulkCreate(newProductTags),
+    ]);
+  })
+  .then((updatedProductTags) => res.json(updatedProductTags))
+  .catch((err) => {
+    // if we fail validation
+    if(err.name === 'SequelizeValidationError'){
+      res.status(400).json({message: `Cannot add product with ${err.errors[0].path} containing non space or alpha characters`});
+    } else if(err.name === 'SequelizeUniqueConstraintError'){
+      // RFC2616 states error 400 as : the server cannot or will not process the request due to something that is perceived to be a client error
+      // we wil use this as the client trying to add an entry that is already there is their own fault
+      res.status(400).json({message: `Product ${req.body.product_name} already exists`});
+    } else{
+      res.status(500).json(err);
+    }
+  });
 });
 
 router.delete('/:id', async (req, res) => {
