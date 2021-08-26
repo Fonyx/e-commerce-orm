@@ -52,8 +52,7 @@ router.post('/', async (req, res) => {
       // if string validation fails
       if(err.name === 'SequelizeValidationError'){
         res.status(400).json({message: `Cannot add category with name containing non space or alpha characters`});
-      }
-      if(err.name === 'SequelizeUniqueConstraintError'){
+      } else if(err.name === 'SequelizeUniqueConstraintError'){
         // RFC2616 states error 400 as : the server cannot or will not process the request due to something that is perceived to be a client error
         // we wil use this as the client trying to add an entry that is already there is their own fault
         res.status(400).json({message: `Category ${req.body.category_name} already exists`});

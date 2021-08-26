@@ -72,8 +72,7 @@ router.post('/', async (req, res) => {
         // if we fail validation
         if(err.name === 'SequelizeValidationError'){
           res.status(400).json({message: `Cannot add product with name containing non space or alpha characters`});
-        }
-        if(err.name === 'SequelizeUniqueConstraintError'){
+        } else if(err.name === 'SequelizeUniqueConstraintError'){
           // RFC2616 states error 400 as : the server cannot or will not process the request due to something that is perceived to be a client error
           // we wil use this as the client trying to add an entry that is already there is their own fault
           res.status(400).json({message: `Product ${req.body.product_name} already exists`});
@@ -124,8 +123,7 @@ router.put('/:id', async (req, res) => {
       // if we fail validation
       if(err.name === 'SequelizeValidationError'){
         res.status(400).json({message: `Cannot add product with name containing non space or alpha characters`});
-      }
-      if(err.name === 'SequelizeUniqueConstraintError'){
+      } else if(err.name === 'SequelizeUniqueConstraintError'){
         // RFC2616 states error 400 as : the server cannot or will not process the request due to something that is perceived to be a client error
         // we wil use this as the client trying to add an entry that is already there is their own fault
         res.status(400).json({message: `Product ${req.body.product_name} already exists`});
@@ -158,7 +156,6 @@ router.delete('/:id', async (req, res) => {
   // if something else went wrong
   }catch(err){
     // if something went wrong in the server
-    clog(err, red);
     res.status(500).json({message: `Failed to delete product using id:${req.params.id}`});
   }
 });
