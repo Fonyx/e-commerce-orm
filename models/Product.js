@@ -48,6 +48,9 @@ Product.init(
         model: 'category',
         key: 'id',
       },
+      validate: {
+        isInt: true,
+      }
     },
   },
   {
