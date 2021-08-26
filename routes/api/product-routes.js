@@ -59,15 +59,27 @@ router.post('/', async (req, res) => {
               tag_id,
             };
           });
+          // returns a promise to be process in subsequent then statement
           return ProductTag.bulkCreate(productTagIdArr);
         }
         // if no product tags, just respond
         res.status(200).json(product);
       })
-      .then((productTagIds) => res.status(200).json(productTagIds))
+      .then((productTagIds) => {
+        res.status(200).json(productTagIds)
+      })
       .catch((err) => {
-        console.log(err);
-        res.status(400).json(err);
+        // if we fail validation
+        if(err.name === 'SequelizeValidationError'){
+          res.status(400).json({message: `Cannot add product with name containing non space or alpha characters`});
+        }
+        if(err.name === 'SequelizeUniqueConstraintError'){
+          // RFC2616 states error 400 as : the server cannot or will not process the request due to something that is perceived to be a client error
+          // we wil use this as the client trying to add an entry that is already there is their own fault
+          res.status(400).json({message: `Product ${req.body.product_name} already exists`});
+        } else{
+          res.status(500).json(err);
+        }
       });
   }
 });
@@ -109,8 +121,17 @@ router.put('/:id', async (req, res) => {
     })
     .then((updatedProductTags) => res.json(updatedProductTags))
     .catch((err) => {
-      // console.log(err);
-      res.status(400).json(err);
+      // if we fail validation
+      if(err.name === 'SequelizeValidationError'){
+        res.status(400).json({message: `Cannot add product with name containing non space or alpha characters`});
+      }
+      if(err.name === 'SequelizeUniqueConstraintError'){
+        // RFC2616 states error 400 as : the server cannot or will not process the request due to something that is perceived to be a client error
+        // we wil use this as the client trying to add an entry that is already there is their own fault
+        res.status(400).json({message: `Product ${req.body.product_name} already exists`});
+      } else{
+        res.status(500).json(err);
+      }
     });
 });
 
