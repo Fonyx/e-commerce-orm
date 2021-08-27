@@ -82,7 +82,7 @@ No credits as this was a homework project
 ## Features
 
 1: Express routes for GET, POST, PUT AND DELETE http requests  
-2: Models representing Catgory, Product Tag, and Products to be acted on by the above requests  
+2: Models representing Category, Product Tag, and Products to be acted on by the above requests  
 3: Basic jest test suit for custom validator testing  
 
 ## Contributing

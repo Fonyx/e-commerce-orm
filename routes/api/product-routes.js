@@ -179,7 +179,7 @@ router.put('/:id', async (req, res) => {
   } else {
     package['category_id'] = req.body.category_id;
   }
-  await Product.update(req.body, {
+  await Product.update(package, {
     where: {
       id: req.params.id,
     },
