@@ -62,6 +62,7 @@ With server running @ localhost:3001/api/ options are:
 - Add a product using /product with a post request
 - POST, PUT or DELETE using the corresponding url ending and HTTP request type  
 
+SETUP: https://drive.google.com/file/d/1bzJbN6Kt-3Z4np_YCsPSxalZos884KEB/view  
 PRODUCT USAGE VIDEO: https://drive.google.com/file/d/1JyVI0s2m3s9BjTrb8N9tpLXA5GJVTUh4/view  
 CATEGORY AND TAG VIDEO: https://drive.google.com/file/d/1eLmQd70gt0qeqWiMnLPfm5Z_KQXp16iq/view  
 
