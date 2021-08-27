@@ -76,6 +76,7 @@ CATEGORY AND TAG VIDEO: https://drive.google.com/file/d/1eLmQd70gt0qeqWiMnLPfm5Z
 3: 'npm install' to grab project dependencies  
 4: From the mysql shell, run 'source db/schema.sql;' to create a database named 'ecommerce_db';  
 4: 'npm run seed' to populate data base with starting data and to structure it using sequelize  
+5: Import insomia command environment by using cog icon in the top right of the program, navigate to data, then select import data. Pass in path of Insomnia/Insomnia.json in project to get default commands for using program
 5: 'npm start' to run server  
 
 ## Credits
