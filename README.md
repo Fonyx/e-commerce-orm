@@ -11,7 +11,7 @@
 A basic ORM project that mocks up an e-commerce website for selling category products with description tags. 
 Built using Express and Sequelize, tested with Insomnia and Jest.  
 
-![Alt text](https://github.com/Fonyx/eCommerceOrm/blob/main/assets/images/show.gif?raw=true "show capture gif")  
+![Alt text](https://github.com/Fonyx/eCommerceOrm/blob/main/Assets/images/show.gif?raw=true "show capture gif")  
 
 ## License
 
