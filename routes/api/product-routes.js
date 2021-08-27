@@ -35,6 +35,29 @@ router.get('/:id', async (req, res) => {
   // be sure to include its associated Category and Tag data
 });
 
+/**
+ * Function that returns a list of tagId's
+ * @param {[int/str]} mixedTagList either a tag_id element or a tag_name element as int/str
+ */
+async function makeTagIdsFromData(mixedTagList){
+  let resultIds = [];
+  for(let element of mixedTagList){
+    // check if value can be parsed, if so, it is an id otherwise it is a category_name
+    if(parseInt(element)){
+      resultIds.push(element);
+    } else{
+      let tagObj = await Tag.findOne({where: {tag_name: element}});
+      if(tagObj){
+        console.log(tagObj.id);
+        resultIds.push(tagObj.id);
+      } else {
+        throw new Error(`Tag named: ${element} not found`);
+      }
+    }
+  }
+  return resultIds;
+}
+
 // create new product, lots of parameter vetting for category and tag
 router.post('/', async (req, res) => {
   // check post structure
@@ -56,10 +79,12 @@ router.post('/', async (req, res) => {
   let allTagNames = tags.map((tagObj) => tagObj.id+':'+tagObj.tag_name);
   // make list of requested tag id numbers
   let availableTagIds = tags.map((tagObj) => tagObj.id);
+  let availableTagNames = tags.map((tagObj) => tagObj.tag_name);
   // check that all the tag id's are present
   for(let i=0; i<req.body.tagIds.length; i++){
     let currentReqTag = req.body.tagIds[i];
-    if(!availableTagIds.includes(currentReqTag)){
+    // if current requested tag isn't in valid id's or names, return early and show available
+    if(!availableTagIds.includes(currentReqTag) && !availableTagNames.includes(currentReqTag)){
       res.status(400).json({message:`Unable to find Tag in request, please choose from: ${allTagNames}`});
       return
     }
@@ -91,17 +116,25 @@ router.post('/', async (req, res) => {
   }
   // create object logic - we use the exploded create syntax since we are adding details to the req.body params
   Product.create(package)
-  .then((product) => {
+  .then(async (product) => {
     // if there's product tags, we need to create pairings to bulk create in the ProductTag model
     if (req.body.tagIds.length) {
-      const productTagIdArr = req.body.tagIds.map((tag_id) => {
+      let tagPackageIds = await makeTagIdsFromData(req.body.tagIds);
+      const productTagIdArr = tagPackageIds.map((tag_id) => {
         return {
           product_id: product.id,
           tag_id,
         };
       });
       // returns a promise to be process in subsequent then statement
-      return ProductTag.bulkCreate(productTagIdArr);
+      try{
+        return ProductTag.bulkCreate(productTagIdArr);
+      }catch(err){
+        if(err.message.includes('Tag named:')){
+          res.status(400).json(`Failed to add a tag, please use elements from ${allTagNames}`);
+          return
+        }
+      }
     }
     // if no product tags, just respond
     res.status(200).json(product);
